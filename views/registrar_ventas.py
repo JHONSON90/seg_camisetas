@@ -324,6 +324,7 @@ with col_form:
     mask_prod = productos_df["id"].astype(str) == prod_id_sel
     if mask_prod.any():
         precio_unit = float(productos_df.loc[mask_prod, "price"].values[0])
+        precio_min = float(productos_df.loc[mask_prod, "Min_price"].values[0])
         stock_disp  = int(productos_df.loc[mask_prod, tienda_sel].values[0])
         st.caption(f"Stock disponible en **{tienda_sel}**: {stock_disp} unidades")
     else:
@@ -346,8 +347,17 @@ with col_form:
         with col_d:
             sale_date = st.date_input("Fecha:", value=datetime.now().date())
 
-        total_est = round(precio_unit * qty, 2)
-        st.markdown(f"**Total estimado:** `${total_est:,.2f}`")
+        valor_unt = st.number_input(
+                "Valor Unitario:",
+                min_value=float(precio_min),
+                max_value=float(precio_unit),
+                value=float(precio_unit),
+                step=1000.00,
+                format="%.2f"
+            )
+
+        total_est = round(valor_unt * qty, 2)
+        st.markdown(f"**Total estimado:** `${total_est:,.2f}`")    
 
         amount_paid = st.number_input(
             "Monto Pagado ($):",
